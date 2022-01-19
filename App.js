@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
 import ReduxThunk from 'redux-thunk'
@@ -11,17 +11,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Picker } from '@react-native-picker/picker';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
+import { Picker } from '@react-native-picker/picker';
 import { en, hi } from './i18n/supportedLanguages';
 
 
 const Stack = createNativeStackNavigator()
+const Drawer = createDrawerNavigator();
 
 import NewPlaceScreen from './screens/NewPlaceScreen';
 import PlacesListScreen from './screens/PlacesListScreen';
 import PlaceDetailsScreen from './screens/PlaceDetailsScreen';
 import MapScreen from './screens/MapScreen';
+import LoginScreen from './screens/LoginScreen';
 
 import palcesReducer from './store/palces-reducer';
 
@@ -90,19 +93,73 @@ const App = () => {
     );
   }
 
+  const HeaderLeft = props => {
+    return (
+      <FontAwesome
+        name="bars"
+        size={24}
+        color="black"
+        style={{ marginEnd: 10 }}
+        onPress={() => { props.navigation.toggleDrawer(); }} />
+    )
+  }
+
+  const ScreensStack = () => {
+    return (
+      <Stack.Navigator >
+        <Stack.Screen
+          name="PlacesListScreen"
+          component={PlacesListScreen}
+          options={({ navigation }) => ({
+            title: i18n.t('listOfPlaces'),
+            headerRight: props => <HeaderRight {...props} navigation={navigation} />,
+            headerLeft: props => <HeaderLeft {...props} navigation={navigation} />
+          })}
+          initialParams={{ lang: selectedLanguage }} />
+
+        <Stack.Screen
+          name="NewPlaceScreen"
+          component={NewPlaceScreen}
+          options={({ navigation }) => ({
+            title: i18n.t('addPlace'),
+            headerLeft: props => <HeaderLeft {...props} navigation={navigation} />
+          })}
+          initialParams={{ lang: selectedLanguage }} />
+
+        <Stack.Screen
+          name="PlaceDetailsScreen"
+          component={PlaceDetailsScreen}
+          options={({ navigation }) => ({
+            title: 'Place Details',
+            headerLeft: props => <HeaderLeft {...props} navigation={navigation} />
+          })} />
+
+        <Stack.Screen
+          name="Map"
+          component={MapScreen}
+          options={{ title: 'Map' }} />
+      </Stack.Navigator>
+    )
+  }
+
+  const LoginStack = () => {
+    return (
+      <Stack.Navigator screenOptions={({ navigation }) => ({
+        headerLeft: props => <HeaderLeft {...props} navigation={navigation} />
+      })}>
+        <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ title: 'Login User' }} />
+      </Stack.Navigator>
+    )
+  }
+
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="PlacesListScreen" component={PlacesListScreen}
-            options={({ navigation }) => ({
-              title: i18n.t('listOfPlaces'),
-              headerRight: props => <HeaderRight {...props} navigation={navigation} />
-            })} />
-          <Stack.Screen name="NewPlaceScreen" component={NewPlaceScreen} options={{ title: i18n.t('addPlace') }} initialParams={{ lang: selectedLanguage }} />
-          <Stack.Screen name="PlaceDetailsScreen" component={PlaceDetailsScreen} options={{ title: 'Add a place' }} />
-          <Stack.Screen name="Map" component={MapScreen} options={{ title: 'Map' }} />
-        </Stack.Navigator>
+        <Drawer.Navigator initialRouteName="PlacesListScreen">
+          <Drawer.Screen name="Screens" component={ScreensStack} options={{ headerShown: false }} />
+          <Drawer.Screen name="Login" component={LoginStack} options={{ headerShown: false }} />
+
+        </Drawer.Navigator>
       </NavigationContainer>
     </Provider >
   );
