@@ -13,6 +13,7 @@ const ImgPicker = props => {
   i18n.fallbacks = true;
   i18n.translations = { en, hi };
   i18n.locale = props.lang ? props.lang : Localization.locale
+  const launchOptions = { allowsEditing: true, aspect: [16, 9], quality: 0.5 }
 
   const [pickedImage, setPickedImage] = useState();
 
@@ -29,22 +30,21 @@ const ImgPicker = props => {
     return true;
   };
 
+
+
   const takeImageHandler = async () => {
     const hasPermission = await verifyPermissions();
     if (!hasPermission) {
       return;
     }
-    const image = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [16, 9],
-      quality: 0.5
-    });
-
-    // const image2 = await ImagePicker.launchImageLibraryAsync
-    //console.log('image ',image)
+    const image = await ImagePicker.launchCameraAsync(launchOptions);
     setPickedImage(image.uri);
     props.onImageTaken(image.uri);
   };
+
+ 
+
+
 
   return (
     <View style={styles.imagePicker}>
@@ -55,11 +55,17 @@ const ImgPicker = props => {
           <Image style={styles.image} source={{ uri: pickedImage }} />
         )}
       </View>
-      <Button
-        title={i18n.t('takeImage')}
-        color={Colors.primary}
-        onPress={takeImageHandler}
-      />
+
+      <View style={styles.btnContainer}>
+        <Button
+          title={i18n.t('takeImage')}
+          color={Colors.primary}
+          onPress={takeImageHandler}
+        />
+      </View>
+
+
+
     </View>
   );
 };
@@ -81,6 +87,9 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%'
+  },
+  btnContainer: {
+    marginVertical: 5
   }
 });
 

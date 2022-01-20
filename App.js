@@ -25,6 +25,7 @@ import PlacesListScreen from './screens/PlacesListScreen';
 import PlaceDetailsScreen from './screens/PlaceDetailsScreen';
 import MapScreen from './screens/MapScreen';
 import LoginScreen from './screens/LoginScreen';
+import PANVerification from './screens/PANVerification'
 
 import palcesReducer from './store/palces-reducer';
 
@@ -152,12 +153,27 @@ const App = () => {
     )
   }
 
+  const PANcardStack = () => {
+    return (
+      <Stack.Navigator screenOptions={({ navigation }) => ({
+        headerLeft: props => <HeaderLeft {...props} navigation={navigation} />
+      })}>
+        <Stack.Screen
+          name="PAN Verification"
+          component={PANVerification}
+          options={{ title: 'Validate your PAN Card' }}
+          initialParams={{ lang: selectedLanguage }} />
+      </Stack.Navigator>
+    )
+  }
+
   return (
     <Provider store={store}>
       <NavigationContainer>
         <Drawer.Navigator initialRouteName="PlacesListScreen">
           <Drawer.Screen name="Screens" component={ScreensStack} options={{ headerShown: false }} />
           <Drawer.Screen name="Login" component={LoginStack} options={{ headerShown: false }} />
+          <Drawer.Screen name="Verify PAN" component={PANcardStack} options={{ headerShown: false }} />
 
         </Drawer.Navigator>
       </NavigationContainer>

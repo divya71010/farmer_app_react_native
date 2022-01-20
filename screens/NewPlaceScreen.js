@@ -39,6 +39,7 @@ const NewPlaceScreen = props => {
   };
 
   const imageTakenHandler = imagePath => {
+    console.log('imagePath ',imagePath)
     setSelectedImage(imagePath);
   };
 
@@ -73,7 +74,7 @@ const NewPlaceScreen = props => {
           onLocationPicked={locationPickedHandler}
           lang={lang} />
         <Button
-          title={i18n.t('takeImage')}
+          title={i18n.t('savePlace')}
           color={Colors.primary}
           onPress={savePlaceHandler}
         />
