@@ -10,7 +10,7 @@ import PickOptions from './PickOption';
 
 
 const PanCardPicker = props => {
-    const launchOptions = { allowsEditing: true, aspect: [16, 9], quality: 0.5 }
+    const launchOptions = { mediaTypes: ImagePicker.MediaTypeOptions.All, allowsEditing: true, aspect: [16, 9], quality: 0.5 }
 
     const [frontImage, setFrontImage] = useState()
     const [backImage, setBackImage] = useState()
@@ -58,7 +58,6 @@ const PanCardPicker = props => {
         setShowBottonSheet(false)
 
         if (front) {
-
             setFrontImage(image.uri);
             props.frontImageHandler(image)
             return;

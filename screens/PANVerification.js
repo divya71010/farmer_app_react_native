@@ -22,10 +22,11 @@ const PANVerification = props => {
     const [selectedFrontImage, setSelectedFrontImage] = useState();
     const [selectedBackImage, setSelectedBackImage] = useState()
     const [isloading, setIsLoading] = useState(false)
+    const [panResponse, setPanResponse] = useState('')
 
 
 
-    const frontImageHandler = img => {
+    const frontImageHandler = async (img) => {
         if (img.cancelled) {
             return;
         }
@@ -35,16 +36,8 @@ const PANVerification = props => {
         }
 
         const fileName = img.uri.split('/').pop();
+        setSelectedFrontImage({ uri: img.uri, name: fileName, type: img.type })
 
-        const frontImageData = {
-            uri: img.uri,
-            name: fileName,
-            type: img.type
-        }
-
-        setSelectedFrontImage(frontImageData)
-
-       
     };
 
     const backImageHandler = img => {
@@ -58,51 +51,57 @@ const PANVerification = props => {
         }
 
         const fileName = img.uri.split('/').pop();
+        setSelectedBackImage({ uri: img.uri, name: fileName, type: img.type })
 
-        const backImageData = {
-            uri: img.uri,
-            name: fileName,
-            type: img.type
-        }
-
-        setSelectedBackImage(backImageData)
 
     }
 
     const verifyPANCardHandler = async () => {
+
         if (!selectedFrontImage) {
             Alert.alert('Select front image')
             return;
         }
+
         if (!selectedBackImage) {
             Alert.alert('Select back image')
             return;
         }
 
         setIsLoading(true)
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", "Basic QUlMRVBOTDZJMUdEWDFTMlQyNVVRTzg1NFpRNVNFVEE6RkE2SUdHMVhTWUhIVjQ2NjdRU0lMN1NDSEFGSTRaRDU=");
+        try {
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", "Basic QUlMRVBOTDZJMUdEWDFTMlQyNVVRTzg1NFpRNVNFVEE6RkE2SUdHMVhTWUhIVjQ2NjdRU0lMN1NDSEFGSTRaRDU=");
+            myHeaders.append("Content-Type", "multipart/form-data");
 
-        var formdata = new FormData();
-        formdata.append("front_part", selectedFrontImage, selectedFrontImage.uri);
-        formdata.append("back_part", selectedBackImage, selectedBackImage.uri);
-        formdata.append("should_verify", "true");
+            var formdata = new FormData();
+            formdata.append("front_part", { uri: selectedFrontImage.uri, name: selectedFrontImage.name, type: "image/jpg" }, selectedFrontImage.uri);
+            formdata.append("back_part", { uri: selectedBackImage.uri, name: selectedBackImage.name, type: "image/jpg" }, selectedBackImage.uri);
+            formdata.append("should_verify", "true");
 
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: formdata,
-            redirect: 'follow'
-        };
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: formdata,
+                redirect: 'follow'
+            };
 
-        fetch("https://ext.digio.in:444/v3/client/kyc/analyze/file/idcard", requestOptions)
-            .then(response => response.text())
-            .then(result => console.log(result))
-            .catch(error => console.log('error', error))
+            const response = await fetch("https://ext.digio.in:444/v3/client/kyc/analyze/file/idcard", requestOptions)
+            const responseJSON = await response.json()
+            setIsLoading(false)
+            setPanResponse(JSON.stringify(responseJSON))
+           
+            console.log('responseJSON ', responseJSON)
 
+        } catch (e) {
+            setIsLoading(false)
+            console.log('e ', e)
+        }
 
-        setIsLoading(false)
     }
+
+
+
 
     if (isloading) {
         return (
@@ -124,6 +123,8 @@ const PANVerification = props => {
                     color={Colors.primary}
                     onPress={verifyPANCardHandler}
                 />
+
+                <Text>{panResponse}</Text>
             </View>
 
 
