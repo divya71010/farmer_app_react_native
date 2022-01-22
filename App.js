@@ -26,6 +26,7 @@ import PlaceDetailsScreen from './screens/PlaceDetailsScreen';
 import MapScreen from './screens/MapScreen';
 import LoginScreen from './screens/LoginScreen';
 import PANVerification from './screens/PANVerification'
+import VoterIdVerificationScreen from './screens/VoterIdVerificationScreen'
 
 import palcesReducer from './store/palces-reducer';
 
@@ -167,6 +168,20 @@ const App = () => {
     )
   }
 
+  const VoterIDStack = () => {
+    return (
+      <Stack.Navigator screenOptions={({ navigation }) => ({
+        headerLeft: props => <HeaderLeft {...props} navigation={navigation} />
+      })}>
+        <Stack.Screen
+          name="VoterID Verification"
+          component={VoterIdVerificationScreen}
+          options={{ title: 'Validate your Voter ID' }}
+          initialParams={{ lang: selectedLanguage }} />
+      </Stack.Navigator>
+    )
+  }
+
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -174,6 +189,7 @@ const App = () => {
           <Drawer.Screen name="Screens" component={ScreensStack} options={{ headerShown: false }} />
           <Drawer.Screen name="Login" component={LoginStack} options={{ headerShown: false }} />
           <Drawer.Screen name="Verify PAN" component={PANcardStack} options={{ headerShown: false }} />
+          <Drawer.Screen name="Verify Voter ID" component={VoterIDStack} options={{ headerShown: false }} />
 
         </Drawer.Navigator>
       </NavigationContainer>
