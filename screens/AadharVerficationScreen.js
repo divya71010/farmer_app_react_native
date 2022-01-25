@@ -7,7 +7,8 @@ import {
     TextInput,
     StyleSheet,
     Alert,
-    ActivityIndicator
+    ActivityIndicator,
+    Image
 } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 
@@ -17,16 +18,15 @@ import ENV from '../env'
 
 
 
-const PANVerification = props => {
+const AadharVerification = props => {
 
     const [selectedFrontImage, setSelectedFrontImage] = useState();
     const [selectedBackImage, setSelectedBackImage] = useState()
     const [isloading, setIsLoading] = useState(false)
-    const [panResponse, setPanResponse] = useState('')
+    const [base64Icon, setbase64Icon] = useState()
 
 
-
-    const frontImageHandler = async (img) => {
+    const frontImageHandler = (img) => {
         if (img.cancelled) {
             return;
         }
@@ -56,17 +56,13 @@ const PANVerification = props => {
 
     }
 
-    const verifyPANCardHandler = async () => {
+    const verifyAadharCardHandler = async () => {
 
         if (!selectedFrontImage) {
             Alert.alert('Select front image')
             return;
         }
 
-        if (!selectedBackImage) {
-            Alert.alert('Select back image')
-            return;
-        }
 
         setIsLoading(true)
         try {
@@ -75,9 +71,8 @@ const PANVerification = props => {
             myHeaders.append("Content-Type", "multipart/form-data");
 
             var formdata = new FormData();
-            formdata.append("front_part", { uri: selectedFrontImage.uri, name: selectedFrontImage.name, type: "image/jpg" }, selectedFrontImage.uri);
-            formdata.append("back_part", { uri: selectedBackImage.uri, name: selectedBackImage.name, type: "image/jpg" }, selectedBackImage.uri);
-            formdata.append("should_verify", "true");
+            formdata.append("file", { uri: selectedFrontImage.uri, name: selectedFrontImage.name, type: "image/jpg" }, selectedFrontImage.uri);
+            formdata.append("consent", "yes");
 
             var requestOptions = {
                 method: 'POST',
@@ -86,12 +81,12 @@ const PANVerification = props => {
                 redirect: 'follow'
             };
 
-            const response = await fetch("https://ext.digio.in:444/v3/client/kyc/analyze/file/idcard", requestOptions)
+            const response = await fetch("https://ext.digio.in:444/v3/client/kyc/aadhaar/file/mask?resp_json=true", requestOptions)
             const responseJSON = await response.json()
+            setbase64Icon('data:image/jpg;base64,' + responseJSON.data)
             setIsLoading(false)
-            setPanResponse(JSON.stringify(responseJSON))
-
             console.log('responseJSON ', responseJSON)
+            // setaadhaarResponse(JSON.stringify(responseJSON))
 
         } catch (e) {
             setIsLoading(false)
@@ -102,14 +97,14 @@ const PANVerification = props => {
 
 
 
-    /* 
-        if (isloading) {
-            return (
-                <View style={styles.loaderContainer}>
-                    <ActivityIndicator size="large" color={Colors.primary} />
-                </View>
-            )
-        } */
+
+    /*   if (isloading) {
+          return (
+              <View style={styles.loaderContainer}>
+                  <ActivityIndicator size="large" color={Colors.primary} />
+              </View>
+          )
+      } */
 
     return (
         <ScrollView>
@@ -118,21 +113,14 @@ const PANVerification = props => {
                     frontImageHandler={frontImageHandler}
                     backImageHandler={backImageHandler}
                     loading={isloading} />
-
                 {!isloading ? <View>
-
-
+                    <Image style={styles.maskedImageContainer} source={base64Icon ? { uri: base64Icon } : require('../assets/dummyimage.png')} />
                     <Button
                         title="VERIFY"
                         color={Colors.primary}
-                        onPress={verifyPANCardHandler} />
-
-                    <Text>{panResponse}</Text>
-
-
-                </View> : <ActivityIndicator size="large" color={Colors.primary} />
-
-                }
+                        onPress={verifyAadharCardHandler}
+                    />
+                </View> : <ActivityIndicator size="large" color={Colors.primary} />}
             </View>
 
 
@@ -160,8 +148,17 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    maskedImageContainer: {
+        width: '100%',
+        height: 200,
+        marginBottom: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderColor: '#ccc',
+        borderWidth: 1
     }
 });
 
 
-export default PANVerification
+export default AadharVerification;

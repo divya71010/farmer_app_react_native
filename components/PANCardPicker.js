@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Button, Image, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { BottomSheet } from 'react-native-btr';
@@ -16,6 +16,8 @@ const PanCardPicker = props => {
     const [backImage, setBackImage] = useState()
     const [showBottomSheet, setShowBottonSheet] = useState(false)
     const [isFront, setIsFront] = useState(true)
+
+    
 
     const showBottom = (front) => {
         setIsFront(front)
@@ -69,6 +71,7 @@ const PanCardPicker = props => {
     };
 
     const selectImageHandler = async (front) => {
+
         const hasPermission = await verifyGalleryPermissions();
         if (!hasPermission) {
             return;
@@ -118,28 +121,31 @@ const PanCardPicker = props => {
                 )}
             </View>
 
-            <View style={styles.btnContainer}>
-                <Button
-                    title="FRONT IMAGE"
-                    color={Colors.primary}
-                    onPress={showBottom.bind(this, true)}
-                />
-            </View>
+            {!props.loading ? < View >
+                <View style={styles.btnContainer}>
+                    <Button
+                        title="FRONT IMAGE"
+                        color={Colors.primary}
+                        onPress={showBottom.bind(this, true)}
+                    />
+                </View>
 
 
-            <View style={styles.btnContainer}>
-                <Button
-                    title="BACK IMAGE"
-                    color={Colors.primary}
-                    onPress={showBottom.bind(this, false)}
-                />
-            </View>
+                <View style={styles.btnContainer}>
+                    <Button
+                        title="BACK IMAGE"
+                        color={Colors.primary}
+                        onPress={showBottom.bind(this, false)}
+                    />
+                </View>
+            </View> : null
 
+            }
             <BottomSheet visible={showBottomSheet} onBackdropPress={() => { setShowBottonSheet(false) }}>
                 {bottomSheetView}
             </BottomSheet>
 
-        </View>
+        </View >
     );
 };
 

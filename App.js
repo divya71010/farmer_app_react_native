@@ -27,6 +27,7 @@ import MapScreen from './screens/MapScreen';
 import LoginScreen from './screens/LoginScreen';
 import PANVerification from './screens/PANVerification'
 import VoterIdVerificationScreen from './screens/VoterIdVerificationScreen'
+import AadharVerification from './screens/AadharVerficationScreen'
 
 import palcesReducer from './store/palces-reducer';
 
@@ -182,6 +183,20 @@ const App = () => {
     )
   }
 
+  const AadharStack= () => {
+    return (
+      <Stack.Navigator screenOptions={({ navigation }) => ({
+        headerLeft: props => <HeaderLeft {...props} navigation={navigation} />
+      })}>
+        <Stack.Screen
+          name="Aadhaar Verification"
+          component={AadharVerification}
+          options={{ title: 'Validate your Aadhaar Card' }}
+          initialParams={{ lang: selectedLanguage }} />
+      </Stack.Navigator>
+    )
+  }
+
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -190,6 +205,7 @@ const App = () => {
           <Drawer.Screen name="Login" component={LoginStack} options={{ headerShown: false }} />
           <Drawer.Screen name="Verify PAN" component={PANcardStack} options={{ headerShown: false }} />
           <Drawer.Screen name="Verify Voter ID" component={VoterIDStack} options={{ headerShown: false }} />
+          <Drawer.Screen name="Verify Aadhar card" component={AadharStack} options={{ headerShown: false }} />
 
         </Drawer.Navigator>
       </NavigationContainer>

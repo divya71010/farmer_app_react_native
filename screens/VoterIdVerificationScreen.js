@@ -26,7 +26,7 @@ const VoterIdVerificationScreen = props => {
 
 
 
-    const frontImageHandler = async (img) => {
+    const frontImageHandler = useCallback((img) => {
         if (img.cancelled) {
             return;
         }
@@ -38,7 +38,7 @@ const VoterIdVerificationScreen = props => {
         const fileName = img.uri.split('/').pop();
         setSelectedFrontImage({ uri: img.uri, name: fileName, type: img.type })
 
-    };
+    }, [selectedFrontImage]);
 
     const backImageHandler = img => {
 
@@ -63,11 +63,11 @@ const VoterIdVerificationScreen = props => {
             return;
         }
 
-        /* if (!selectedBackImage) {
+        if (!selectedBackImage) {
             Alert.alert('Select back image')
             return;
         }
- */
+
         setIsLoading(true)
         try {
             var myHeaders = new Headers();
@@ -76,7 +76,7 @@ const VoterIdVerificationScreen = props => {
 
             var formdata = new FormData();
             formdata.append("front_part", { uri: selectedFrontImage.uri, name: selectedFrontImage.name, type: "image/jpg" }, selectedFrontImage.uri);
-           // formdata.append("back_part", { uri: selectedBackImage.uri, name: selectedBackImage.name, type: "image/jpg" }, selectedBackImage.uri);
+            formdata.append("back_part", { uri: selectedBackImage.uri, name: selectedBackImage.name, type: "image/jpg" }, selectedBackImage.uri);
             formdata.append("should_verify", "true");
 
             var requestOptions = {
@@ -90,8 +90,8 @@ const VoterIdVerificationScreen = props => {
             const responseJSON = await response.json()
             setIsLoading(false)
             setvoterIdResponse(JSON.stringify(responseJSON))
-           
-            console.log('responseJSON ', responseJSON)
+
+            // console.log('responseJSON ', responseJSON)
 
         } catch (e) {
             setIsLoading(false)
@@ -102,29 +102,33 @@ const VoterIdVerificationScreen = props => {
 
 
 
-
-    if (isloading) {
-        return (
-            <View style={styles.loaderContainer}>
-                <ActivityIndicator size="large" color={Colors.primary} />
-            </View>
-        )
-    }
+    /* 
+        if (isloading) {
+            return (
+                <View style={styles.loaderContainer}>
+                    <ActivityIndicator size="large" color={Colors.primary} />
+                </View>
+            )
+        } */
 
     return (
         <ScrollView>
             <View style={styles.form}>
                 <PanCardPicker
                     frontImageHandler={frontImageHandler}
-                    backImageHandler={backImageHandler} />
+                    backImageHandler={backImageHandler}
+                    loading={isloading} />
 
-                <Button
-                    title="VERIFY"
-                    color={Colors.primary}
-                    onPress={verifyPANCardHandler}
-                />
+                {!isloading ? <View>
 
-                <Text>{voterIdResponse}</Text>
+                    <Button
+                        title="VERIFY"
+                        color={Colors.primary}
+                        onPress={verifyPANCardHandler} />
+
+                    <Text>{voterIdResponse}</Text>
+                </View> : <ActivityIndicator size="large" color={Colors.primary} />
+                }
             </View>
 
 
