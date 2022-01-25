@@ -24,6 +24,7 @@ const AadharVerification = props => {
     const [selectedBackImage, setSelectedBackImage] = useState()
     const [isloading, setIsLoading] = useState(false)
     const [base64Icon, setbase64Icon] = useState()
+    const [aadhaarResponse, setaahdaarResponse] = useState()
 
 
     const frontImageHandler = (img) => {
@@ -56,6 +57,7 @@ const AadharVerification = props => {
 
     }
 
+    //MASKING API
     const verifyAadharCardHandler = async () => {
 
         if (!selectedFrontImage) {
@@ -96,6 +98,50 @@ const AadharVerification = props => {
     }
 
 
+    const verifyAadharUsingOCR = async () => {
+
+        if (!selectedFrontImage) {
+            Alert.alert('Select front image')
+            return;
+        }
+
+        if (!selectedBackImage) {
+            Alert.alert('Select back image')
+            return;
+        }
+
+        setIsLoading(true)
+        try {
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", "Basic QUlMRVBOTDZJMUdEWDFTMlQyNVVRTzg1NFpRNVNFVEE6RkE2SUdHMVhTWUhIVjQ2NjdRU0lMN1NDSEFGSTRaRDU=");
+            myHeaders.append("Content-Type", "multipart/form-data");
+
+            var formdata = new FormData();
+            formdata.append("front_part", { uri: selectedFrontImage.uri, name: selectedFrontImage.name, type: "image/jpg" }, selectedFrontImage.uri);
+            formdata.append("back_part", { uri: selectedBackImage.uri, name: selectedBackImage.name, type: "image/jpg" }, selectedBackImage.uri);
+            formdata.append("should_verify", "true");
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: formdata,
+                redirect: 'follow'
+            };
+
+            const response = await fetch("https://ext.digio.in:444/v3/client/kyc/analyze/file/idcard", requestOptions)
+            const responseJSON = await response.json()
+            setIsLoading(false)
+            setaahdaarResponse(JSON.stringify(responseJSON))
+
+            // console.log('responseJSON ', responseJSON)
+
+        } catch (e) {
+            setIsLoading(false)
+            console.log('e ', e)
+        }
+    }
+
+
 
 
     /*   if (isloading) {
@@ -114,12 +160,13 @@ const AadharVerification = props => {
                     backImageHandler={backImageHandler}
                     loading={isloading} />
                 {!isloading ? <View>
-                    <Image style={styles.maskedImageContainer} source={base64Icon ? { uri: base64Icon } : require('../assets/dummyimage.png')} />
+                    {/* <Image style={styles.maskedImageContainer} source={base64Icon ? { uri: base64Icon } : require('../assets/dummyimage.png')} /> */}
                     <Button
                         title="VERIFY"
                         color={Colors.primary}
-                        onPress={verifyAadharCardHandler}
+                        onPress={verifyAadharUsingOCR}
                     />
+                    <Text>{aadhaarResponse}</Text>
                 </View> : <ActivityIndicator size="large" color={Colors.primary} />}
             </View>
 
