@@ -29,6 +29,8 @@ import PANVerification from './screens/PANVerification'
 import VoterIdVerificationScreen from './screens/VoterIdVerificationScreen'
 import AadharVerification from './screens/AadharVerficationScreen'
 import VerificationbyId from './screens/VerificationbyId';
+import AadharKYCScreen from './screens/AadharKYCScreen'
+import WebViewScreen from './screens/WebViewScreen';
 
 import palcesReducer from './store/palces-reducer';
 
@@ -212,6 +214,26 @@ const App = () => {
     )
   }
 
+  const AadharKYCStack = () => {
+    return (
+      <Stack.Navigator screenOptions={({ navigation }) => ({
+        headerLeft: props => <HeaderLeft {...props} navigation={navigation} />
+      })}>
+        <Stack.Screen
+          name="AadharKYC"
+          component={AadharKYCScreen}
+          options={{ title: 'Aadhar KYC' }}
+          initialParams={{ lang: selectedLanguage }} />
+
+        <Stack.Screen
+          name="WebViewScreen"
+          component={WebViewScreen}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator >
+    )
+  }
+
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -222,6 +244,7 @@ const App = () => {
           <Drawer.Screen name="Verify Voter ID" component={VoterIDStack} options={{ headerShown: false }} />
           <Drawer.Screen name="Verify Aadhar card" component={AadharStack} options={{ headerShown: false }} />
           <Drawer.Screen name="Verfiy Documents" component={IdVerificationStack} options={{ headerShown: false }} />
+          <Drawer.Screen name="Aadhar KYC" component={AadharKYCStack} options={{ headerShown: false }} />
 
         </Drawer.Navigator>
       </NavigationContainer>
