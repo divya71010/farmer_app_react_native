@@ -31,6 +31,7 @@ import AadharVerification from './screens/AadharVerficationScreen'
 import VerificationbyId from './screens/VerificationbyId';
 import AadharKYCScreen from './screens/AadharKYCScreen'
 import WebViewScreen from './screens/WebViewScreen';
+import WeatherForeCastScreen from './screens/WeatherForecastScreen';
 
 import palcesReducer from './store/palces-reducer';
 
@@ -234,6 +235,20 @@ const App = () => {
     )
   }
 
+  const WeatherStack = () => {
+    return (
+      <Stack.Navigator screenOptions={({ navigation }) => ({
+        headerLeft: props => <HeaderLeft {...props} navigation={navigation} />
+      })}>
+        <Stack.Screen
+          name="Weather"
+          component={WeatherForeCastScreen}
+          options={{ title: 'Forecast weather' }}
+          initialParams={{ lang: selectedLanguage }} />
+      </Stack.Navigator >
+    )
+  }
+
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -245,6 +260,7 @@ const App = () => {
           <Drawer.Screen name="Verify Aadhar card" component={AadharStack} options={{ headerShown: false }} />
           <Drawer.Screen name="Verfiy Documents" component={IdVerificationStack} options={{ headerShown: false }} />
           <Drawer.Screen name="Aadhar KYC" component={AadharKYCStack} options={{ headerShown: false }} />
+          <Drawer.Screen name="Forecast Weather" component={WeatherStack} options={{ headerShown: false }} />
 
         </Drawer.Navigator>
       </NavigationContainer>

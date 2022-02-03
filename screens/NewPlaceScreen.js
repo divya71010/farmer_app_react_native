@@ -39,12 +39,12 @@ const NewPlaceScreen = props => {
   };
 
   const imageTakenHandler = imagePath => {
-    console.log('imagePath ',imagePath)
+    console.log('imagePath ', imagePath)
     setSelectedImage(imagePath);
   };
 
   const savePlaceHandler = () => {
-    dispatch(placesActions.addPlace(titleValue, selectedImage, selectedLocation,lang));
+    dispatch(placesActions.addPlace(titleValue, selectedImage, selectedLocation, lang));
     props.navigation.goBack();
   };
 
@@ -71,6 +71,7 @@ const NewPlaceScreen = props => {
         <LocationPicker
           navigation={props.navigation}
           route={props.route}
+          showMapBtn
           onLocationPicked={locationPickedHandler}
           lang={lang} />
         <Button

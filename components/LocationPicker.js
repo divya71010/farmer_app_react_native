@@ -82,11 +82,11 @@ const LocationPicker = props => {
                     onPress={getLocationHandler}
                 />
 
-                <Button
+                {props.showMapBtn ? <Button
                     title={i18n.t('pickonMap')}
                     color={Colors.primary}
                     onPress={pickOnMapHandler}
-                />
+                /> : null}
             </View>
 
 
