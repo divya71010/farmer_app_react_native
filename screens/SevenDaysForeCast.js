@@ -14,7 +14,7 @@ import LocationPicker from '../components/LocationPicker';
 import Colors from '../constants/Colors';
 import ENV from '../env'
 
-const WeatherForeCastScreen = props => {
+const SevenDaysForecast = props => {
 
     const [selectedLocation, setSelectedLocation] = useState()
     const [myAddress, setMyAddress] = useState('')
@@ -38,23 +38,20 @@ const WeatherForeCastScreen = props => {
         setShowAddress(true)
     }, [])
 
-    const setPincodeHandler = text => setPincode(text.replace(/[^0-9]/g, ''))
+   
 
     const getWeatherForecast = async () => {
-        setIsLoading(true)
-        /*  let url = `https://api.openweathermap.org/data/2.5/weather?zip=${pincode},in&APPID=6ddaaa3756fd24f939b20df521d886af&units=metric`;
-         if (!isPincode) {
-             url = `https://api.openweathermap.org/data/2.5/weather?lat=${selectedLocation.lat}&lon=${selectedLocation.lng}&APPID=6ddaaa3756fd24f939b20df521d886af&units=metric`
-         } */
         try {
             var requestOptions = { method: 'GET', redirect: 'follow' };
-            const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${selectedLocation.lat}&lon=${selectedLocation.lng}&APPID=6ddaaa3756fd24f939b20df521d886af&units=metric`, requestOptions)
+            const response = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${selectedLocation.lat}&lon=${selectedLocation.lng}&units=metric&appid=6ddaaa3756fd24f939b20df521d886af`, requestOptions)
             const responseJson = await response.json()
             console.log('responseJson ', responseJson)
-            let temp = responseJson.main.temp + "°C"
-            let foreCast = responseJson.weather[0]
-            setTemperature(temp)
-            setForeCastData(foreCast)
+            let weeklyData = responseJson.daily[0]
+            /*let temp = responseJson.main.temp + "°C"
+              let foreCast = responseJson.weather[0]
+              setTemperature(temp)
+              setForeCastData(foreCast) */
+            setForeCastData(JSON.stringify(weeklyData))
             setIsLoading(false)
             setDataReceived(true)
         } catch (e) {
@@ -73,24 +70,6 @@ const WeatherForeCastScreen = props => {
                     route={props.route}
                     onLocationPicked={locationPickedHandler}
                 />
-
-                {/*  <Text style={styles.orTextStyle}>OR</Text> */}
-
-
-                {/* <TextInput
-                    placeholder='Enter Pincode'
-                    style={styles.textInput}
-                    onChangeText={setPincodeHandler}
-                    value={pincode}
-                    maxLength={6}
-                />
-                <Button
-                    title="Get weather forecast"
-                    color={Colors.primary}
-                    onPress={getWeatherForecast.bind(this, true)}
-                /> */}
-
-
                 {showAddress ? <View style={{ marginTop: 15 }}>
                     <Text style={styles.addressHeader}>Your address is :</Text>
                     <Text>{myAddress}</Text>
@@ -99,7 +78,7 @@ const WeatherForeCastScreen = props => {
                             <Button
                                 title="Get weather forecast"
                                 color={Colors.primary}
-                                onPress={getWeatherForecast}
+                                onPress={getWeatherForecast.bind(this, false)}
                             /> : <ActivityIndicator color={Colors.primary} size='large' />
                         }
                     </View>
@@ -107,13 +86,10 @@ const WeatherForeCastScreen = props => {
 
                 {datareceived ?
                     <View>
-                        <Text style={styles.tempHeader}>Temperature at your loaction is</Text>
-                        <Text style={styles.tempTextStyles}>{temperature}</Text>
-
-                        <Text style={styles.tempHeader}>Weather forecast for today is</Text>
+                        <Text style={styles.tempHeader}>Weather forecast data is</Text>
                         <View style={styles.forecastdataContainer}>
-                            <Text style={styles.tempTextStyles}>{foreCastData.description}</Text>
-                            <Image source={{ uri: 'https://openweathermap.org/img/w/' + foreCastData.icon + '.png' }} style={{ width: 50, height: 50, marginTop: 25 }} />
+                            <Text>{foreCastData}</Text>
+                            {/*  <Image source={{ uri: 'https://openweathermap.org/img/w/' + foreCastData.icon + '.png' }} style={{ width: 50, height: 50, marginTop: 25 }} /> */}
                         </View>
 
                     </View> : null
@@ -150,7 +126,6 @@ const styles = StyleSheet.create({
     forecastdataContainer: {
         flexDirection: 'row',
         width: '100%',
-        height: 200,
         justifyContent: 'center'
     },
     orTextStyle: {
@@ -172,4 +147,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default WeatherForeCastScreen;
+export default SevenDaysForecast;

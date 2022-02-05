@@ -32,6 +32,7 @@ import VerificationbyId from './screens/VerificationbyId';
 import AadharKYCScreen from './screens/AadharKYCScreen'
 import WebViewScreen from './screens/WebViewScreen';
 import WeatherForeCastScreen from './screens/WeatherForecastScreen';
+import SevenDaysForecast from './screens/SevenDaysForeCast'
 
 import palcesReducer from './store/palces-reducer';
 
@@ -249,6 +250,21 @@ const App = () => {
     )
   }
 
+  const SevenDaysForecastStack = () => {
+    // 
+    return (
+      <Stack.Navigator screenOptions={({ navigation }) => ({
+        headerLeft: props => <HeaderLeft {...props} navigation={navigation} />
+      })}>
+        <Stack.Screen
+          name="WeatherNDays"
+          component={SevenDaysForecast}
+          options={{ title: 'Forecast weather for n days' }}
+          initialParams={{ lang: selectedLanguage }} />
+      </Stack.Navigator >
+    )
+  }
+
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -261,7 +277,7 @@ const App = () => {
           <Drawer.Screen name="Verfiy Documents" component={IdVerificationStack} options={{ headerShown: false }} />
           <Drawer.Screen name="Aadhar KYC" component={AadharKYCStack} options={{ headerShown: false }} />
           <Drawer.Screen name="Forecast Weather" component={WeatherStack} options={{ headerShown: false }} />
-
+          <Drawer.Screen name="7 days forecast" component={SevenDaysForecastStack} options={{ headerShown: false }} />
         </Drawer.Navigator>
       </NavigationContainer>
     </Provider >
