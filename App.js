@@ -259,7 +259,7 @@ const App = () => {
         <Stack.Screen
           name="WeatherNDays"
           component={SevenDaysForecast}
-          options={{ title: 'Forecast weather for n days' }}
+          options={{ title: 'Forecast weather for 7 days' }}
           initialParams={{ lang: selectedLanguage }} />
       </Stack.Navigator >
     )

@@ -38,19 +38,20 @@ const SevenDaysForecast = props => {
         setShowAddress(true)
     }, [])
 
-   
+
 
     const getWeatherForecast = async () => {
         try {
             var requestOptions = { method: 'GET', redirect: 'follow' };
             const response = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${selectedLocation.lat}&lon=${selectedLocation.lng}&units=metric&appid=6ddaaa3756fd24f939b20df521d886af`, requestOptions)
             const responseJson = await response.json()
-            console.log('responseJson ', responseJson)
-            let weeklyData = responseJson.daily[0]
-            /*let temp = responseJson.main.temp + "°C"
-              let foreCast = responseJson.weather[0]
-              setTemperature(temp)
-              setForeCastData(foreCast) */
+            let weeklyData = responseJson.daily;
+            let unixTS = weeklyData[0].dt;
+            let unixTS6 = weeklyData[6].dt;
+            let date = new Date(unixTS * 1000);
+            let date6 = new Date(unixTS6 * 1000);
+            console.log('date ', date)
+            console.log('date6 ', date6)
             setForeCastData(JSON.stringify(weeklyData))
             setIsLoading(false)
             setDataReceived(true)
