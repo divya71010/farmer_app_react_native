@@ -50,8 +50,7 @@ const SevenDaysForecast = props => {
             let unixTS6 = weeklyData[6].dt;
             let date = new Date(unixTS * 1000);
             let date6 = new Date(unixTS6 * 1000);
-            console.log('date ', date)
-            console.log('date6 ', date6)
+           // const alerts = responseJson.alerts;
             setForeCastData(JSON.stringify(weeklyData))
             setIsLoading(false)
             setDataReceived(true)
